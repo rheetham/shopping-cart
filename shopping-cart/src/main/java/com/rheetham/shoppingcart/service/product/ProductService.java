@@ -1,9 +1,13 @@
 package com.rheetham.shoppingcart.service.product;
 
 import com.rheetham.shoppingcart.exceptions.ProductNotFoundException;
+import com.rheetham.shoppingcart.model.Category;
 import com.rheetham.shoppingcart.model.Product;
+import com.rheetham.shoppingcart.repository.CategoryRepository;
 import com.rheetham.shoppingcart.repository.ProductRepository;
+import com.rheetham.shoppingcart.request.AddProductRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,10 +17,34 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService implements IProductService{
     private ProductRepository productRepository;
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+    }
 
     @Override
-    public Product addProduct(Product product) {
-        return null;
+    public Product addProduct(AddProductRequest request) {
+        Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
+                .orElseGet(() -> {
+                   Category newCategory = new Category(request.getCategory().getName());
+                   return categoryRepository.save(newCategory);
+                });
+        request.setCategory(category);
+        return productRepository.save(createProduct(request, category));
+    }
+
+    private Product createProduct(AddProductRequest request, Category category) {
+        return new Product(
+                request.getName(),
+                request.getBrand(),
+                request.getPrice(),
+                request.getInventory(),
+                request.getDescription(),
+                category
+        );
     }
 
     @Override
