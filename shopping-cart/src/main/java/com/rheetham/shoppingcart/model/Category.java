@@ -1,7 +1,6 @@
 package com.rheetham.shoppingcart.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,10 +19,10 @@ public class Category {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "category")
-    private List<Product> products;
-
     public Category(String name) {
         this.name = name;
     }
+
+    @OneToMany(mappedBy = "category")
+    private List<Product> products
 }
