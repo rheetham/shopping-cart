@@ -17,14 +17,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ProductService implements IProductService{
-    private ProductRepository productRepository;
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
-    }
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public Product addProduct(AddProductRequest request) {

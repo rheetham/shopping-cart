@@ -65,7 +65,8 @@ public class ImageService implements IImageService{
                 throw new RuntimeException(e.getMessage());
             }
         }
-        return savedImageDto;    }
+        return savedImageDto;
+    }
 
     @Override
     public void updateImage(MultipartFile file, Long imageId) {
