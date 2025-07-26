@@ -1,7 +1,6 @@
 package com.rheetham.shoppingcart.service.product;
 
 import com.rheetham.shoppingcart.exceptions.ProductNotFoundException;
-import com.rheetham.shoppingcart.exceptions.ResourceNotFoundException;
 import com.rheetham.shoppingcart.model.Category;
 import com.rheetham.shoppingcart.model.Product;
 import com.rheetham.shoppingcart.repository.CategoryRepository;
@@ -57,12 +56,9 @@ public class ProductService implements IProductService{
 
     @Override
     public void deleteProductById(Long id) {
-        Optional<Product> productOptional = productRepository.findById(id);
-        if (productOptional.isPresent()) {
-            productRepository.delete(productOptional.get());
-        } else {
-            throw new ProductNotFoundException("Product not found!");
-        }
+        productRepository.findById(id)
+                .ifPresentOrElse(productRepository::delete,
+                        () -> {throw new ProductNotFoundException("Product not found!");});
     }
 
     @Override
@@ -70,7 +66,7 @@ public class ProductService implements IProductService{
         return productRepository.findById(productId)
                 .map(existingProduct -> updateExistingProduct(existingProduct,request))
                 .map(productRepository :: save)
-                .orElseThrow(()-> new ResourceNotFoundException("Product not found!"));
+                .orElseThrow(()-> new ProductNotFoundException("Product not found!"));
     }
 
     private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request) {
